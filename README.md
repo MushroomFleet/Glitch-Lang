@@ -11,6 +11,10 @@ A React component library for creating immersive, character-by-character glitch 
 - **React Context integration** — Global state management for language switching
 - **Staggered animations** — Orchestrate multiple text elements with delays
 
+## Live Demo
+
+Try the hosted interactive demo here: **[https://scuffedepoch.com/glitch-lang/](https://scuffedepoch.com/glitch-lang/)**
+
 ## Installation
 
 Copy the following files into your React project:
@@ -223,3 +227,23 @@ function StaggeredContent() {
 ## License
 
 MIT
+
+## 📚 Citation
+
+### Academic Citation
+
+If you use this codebase in your research or project, please cite:
+
+```bibtex
+@software{glitch_lang,
+  title = {Glitch i18n: Multi-Language Text Transition System},
+  author = {Drift Johnson},
+  year = {2025},
+  url = {https://github.com/MushroomFleet/Glitch-Lang},
+  version = {1.0.0}
+}
+```
+
+### Donate:
+
+[![Ko-Fi](https://cdn.ko-fi.com/cdn/kofi3.png?v=3)](https://ko-fi.com/driftjohnson)
