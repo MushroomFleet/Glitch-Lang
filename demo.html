@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GlitchText — Language Transition Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --red:#ff0040;--cyan:#00ffff;--bg:#07070d;--surface:rgba(255,255,255,.02);
+    --border:rgba(255,0,64,.18);--muted:#6a6a88;--text:#e0e0e8;
+    --font-display:'Orbitron',monospace;--font-body:'Rajdhani',sans-serif;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--font-body);
+    overflow-x:hidden;min-height:100vh;
+  }
+
+  /* ── Scanline overlay ── */
+  body::after{
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+    background:repeating-linear-gradient(
+      0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px
+    );
+  }
+
+  /* ── Noise grain ── */
+  body::before{
+    content:'';position:fixed;inset:-50%;width:200%;height:200%;
+    pointer-events:none;z-index:9998;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain .5s steps(6) infinite;
+  }
+  @keyframes grain{0%,100%{transform:translate(0)}10%{transform:translate(-5%,-10%)}30%{transform:translate(3%,2%)}50%{transform:translate(-2%,6%)}70%{transform:translate(7%,-3%)}90%{transform:translate(-1%,4%)}}
+
+  /* ── Navigation ── */
+  .nav{
+    position:sticky;top:0;z-index:100;display:flex;align-items:center;
+    justify-content:space-between;padding:1.4rem 3rem;
+    border-bottom:1px solid var(--border);
+    background:rgba(7,7,13,.88);backdrop-filter:blur(14px);
+  }
+  .nav-brand{
+    font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+    color:var(--red);text-transform:uppercase;letter-spacing:3px;
+  }
+  .nav-links{display:flex;gap:2.4rem}
+  .nav-links [data-glitch]{
+    color:var(--muted);font-size:.92rem;font-weight:500;
+    letter-spacing:1.2px;text-transform:uppercase;cursor:default;
+    transition:color .3s;
+  }
+  .nav-links [data-glitch]:hover{color:var(--cyan)}
+
+  /* ── Hero ── */
+  .hero{
+    min-height:72vh;display:flex;align-items:center;justify-content:center;
+    padding:5rem 3rem;position:relative;overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;inset:0;z-index:0;opacity:.12;
+    background-image:
+      linear-gradient(rgba(0,255,255,.08) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,255,255,.08) 1px,transparent 1px);
+    background-size:48px 48px;
+    animation:gridScroll 25s linear infinite;
+  }
+  @keyframes gridScroll{
+    0%{transform:perspective(600px) rotateX(55deg) translateY(0)}
+    100%{transform:perspective(600px) rotateX(55deg) translateY(48px)}
+  }
+  .hero-content{position:relative;z-index:2;text-align:center;max-width:920px}
+  .hero h1{
+    font-family:var(--font-display);font-weight:900;
+    font-size:clamp(2.4rem,6vw,4.6rem);line-height:1.08;
+    margin-bottom:1.6rem;text-transform:uppercase;letter-spacing:5px;
+    background:linear-gradient(135deg,#fff 0%,var(--red) 55%,var(--cyan) 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero-sub{
+    font-size:1.25rem;color:var(--muted);margin-bottom:2.8rem;
+    letter-spacing:.8px;max-width:620px;margin-inline:auto;line-height:1.5;
+  }
+  .hero-cta-wrap{display:inline-block}
+  .hero-cta{
+    font-family:var(--font-display);font-size:.95rem;font-weight:600;
+    padding:1rem 2.6rem;background:transparent;border:2px solid var(--red);
+    color:var(--red);text-transform:uppercase;letter-spacing:2px;cursor:pointer;
+    transition:all .3s;position:relative;overflow:hidden;
+  }
+  .hero-cta:hover{background:var(--red);color:var(--bg);box-shadow:0 0 36px rgba(255,0,64,.5)}
+
+  /* ── Features ── */
+  .features{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:2rem;padding:5rem 3rem;max-width:1200px;margin:0 auto;
+  }
+  .feature-card{
+    background:var(--surface);border:1px solid var(--border);padding:2.2rem;
+    text-align:center;position:relative;overflow:hidden;transition:all .35s;
+  }
+  .feature-card::before{
+    content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+    background:linear-gradient(90deg,transparent,var(--red),var(--cyan),transparent);
+    transform:translateX(-100%);transition:transform .55s;
+  }
+  .feature-card:hover{border-color:rgba(0,255,255,.35);transform:translateY(-6px);box-shadow:0 12px 44px rgba(0,255,255,.08)}
+  .feature-card:hover::before{transform:translateX(0)}
+  .feature-icon{font-size:2.4rem;margin-bottom:1rem}
+  .feature-card h3{
+    font-family:var(--font-display);font-size:1.15rem;font-weight:700;
+    margin-bottom:.7rem;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;
+  }
+  .feature-card p{color:var(--muted);font-size:.93rem;line-height:1.65}
+
+  /* ── Language Selector ── */
+  .lang-section{
+    padding:4.5rem 3rem;text-align:center;
+    border-top:1px solid var(--border);background:rgba(0,0,0,.25);
+  }
+  .lang-section h2{
+    font-family:var(--font-display);font-size:1.6rem;font-weight:700;
+    margin-bottom:.6rem;color:#fff;text-transform:uppercase;letter-spacing:3px;
+  }
+  .lang-hint{color:var(--muted);margin-bottom:2.2rem;font-size:.95rem;letter-spacing:.5px}
+  .lang-buttons{display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap}
+  .lang-btn{
+    font-family:var(--font-display);font-size:.95rem;font-weight:600;
+    padding:.9rem 2.2rem;background:transparent;cursor:pointer;
+    text-transform:uppercase;letter-spacing:1.5px;transition:all .3s;
+    border:1px solid var(--border);color:var(--muted);position:relative;
+  }
+  .lang-btn::after{
+    content:'';position:absolute;bottom:0;left:50%;width:0;height:2px;
+    background:var(--cyan);transform:translateX(-50%);transition:width .3s;
+  }
+  .lang-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  .lang-btn:hover::after{width:80%}
+  .lang-btn.active{
+    border-color:var(--red);color:var(--red);
+    box-shadow:0 0 22px rgba(255,0,64,.25);
+  }
+  .lang-btn.active::after{width:80%;background:var(--red)}
+
+  /* ── Glitch active state ── */
+  [data-glitch].glitching{animation:microShake .08s infinite}
+  @keyframes microShake{
+    0%,100%{transform:translate(0)}
+    25%{transform:translate(-.8px,.5px)}
+    75%{transform:translate(.8px,-.5px)}
+  }
+
+  /* ── Unresolved shimmer on idle text ── */
+  [data-glitch].unresolved{
+    animation:unresolvedPulse 3s ease-in-out infinite alternate;
+  }
+  @keyframes unresolvedPulse{
+    0%{text-shadow:0 0 4px rgba(255,0,64,.15)}
+    100%{text-shadow:0 0 8px rgba(0,255,255,.2)}
+  }
+
+  /* ── Footer ── */
+  .footer{
+    text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;
+    letter-spacing:1px;border-top:1px solid var(--border);
+  }
+
+  /* ── Responsive ── */
+  @media(max-width:768px){
+    .nav{padding:1rem 1.4rem;flex-direction:column;gap:.8rem}
+    .nav-links{gap:1.4rem}
+    .hero{padding:3rem 1.5rem;min-height:60vh}
+    .features{padding:2.5rem 1.5rem}
+    .lang-section{padding:2.5rem 1.5rem}
+  }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-brand" data-glitch data-key="brand" data-stagger="0">GLITCH//LANG</div>
+  <div class="nav-links">
+    <span data-glitch data-key="nav.0" data-stagger="1"></span>
+    <span data-glitch data-key="nav.1" data-stagger="2"></span>
+    <span data-glitch data-key="nav.2" data-stagger="3"></span>
+    <span data-glitch data-key="nav.3" data-stagger="4"></span>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <h1 data-glitch data-key="title" data-stagger="5"></h1>
+    <p class="hero-sub" data-glitch data-key="subtitle" data-stagger="6"></p>
+    <div class="hero-cta-wrap">
+      <button class="hero-cta" data-glitch data-key="cta" data-stagger="7"></button>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features">
+  <div class="feature-card">
+    <div class="feature-icon">&#9889;</div>
+    <h3 data-glitch data-key="feat.0.title" data-stagger="8"></h3>
+    <p data-glitch data-key="feat.0.desc" data-stagger="9"></p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">&#127760;</div>
+    <h3 data-glitch data-key="feat.1.title" data-stagger="10"></h3>
+    <p data-glitch data-key="feat.1.desc" data-stagger="11"></p>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">&#9881;&#65039;</div>
+    <h3 data-glitch data-key="feat.2.title" data-stagger="12"></h3>
+    <p data-glitch data-key="feat.2.desc" data-stagger="13"></p>
+  </div>
+</section>
+
+<!-- Language Selector -->
+<section class="lang-section">
+  <h2>Select Target Language</h2>
+  <p class="lang-hint">Text is currently unresolved — choose a language to lock in</p>
+  <div class="lang-buttons">
+    <button class="lang-btn" data-lang="en">English</button>
+    <button class="lang-btn" data-lang="es">Espa&ntilde;ol</button>
+    <button class="lang-btn" data-lang="ja">&#26085;&#26412;&#35486;</button>
+  </div>
+</section>
+
+<footer class="footer">GLITCH//LANG &mdash; Character-by-character language transitions</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Translation data ──
+  const T = {
+    en: {
+      brand: 'GLITCH//LANG',
+      title: 'Transform Your Reality',
+      subtitle: 'Immersive multilingual interfaces with stunning transitions',
+      cta: 'Begin Experience',
+      nav: ['Home', 'About', 'Work', 'Contact'],
+      feat: [
+        { title: 'Lightning Fast', desc: 'Optimized character-by-character animations' },
+        { title: 'Multi-Language', desc: 'Unlimited language pair support' },
+        { title: 'Customizable', desc: 'Full control over timing and effects' },
+      ],
+    },
+    ja: {
+      brand: 'グリッチ//ラング',
+      title: '現実を変革せよ',
+      subtitle: '見事なトランジションを備えた没入型多言語インターフェース',
+      cta: '体験を始める',
+      nav: ['ホーム', '概要', '作品', '連絡'],
+      feat: [
+        { title: '超高速', desc: '最適化された文字単位アニメーション' },
+        { title: '多言語対応', desc: '無制限の言語ペアサポート' },
+        { title: 'カスタマイズ可能', desc: 'タイミングと効果を完全制御' },
+      ],
+    },
+    es: {
+      brand: 'GLITCH//LANG',
+      title: 'Transforma Tu Realidad',
+      subtitle: 'Interfaces multilingües inmersivas con transiciones impresionantes',
+      cta: 'Iniciar Experiencia',
+      nav: ['Inicio', 'Acerca', 'Trabajo', 'Contacto'],
+      feat: [
+        { title: 'Ultra Rápido', desc: 'Animaciones optimizadas carácter por carácter' },
+        { title: 'Multi-Idioma', desc: 'Soporte ilimitado de pares de idiomas' },
+        { title: 'Personalizable', desc: 'Control total sobre tiempo y efectos' },
+      ],
+    },
+  };
+
+  const GLITCH_CHARS = '!@#$%^&*ﾊﾐﾋｰｳｼ01█▓▒░⟨⟩※';
+  const LANGS = ['en', 'es', 'ja'];
+
+  // ── Helpers ──
+  function resolve(obj, path) {
+    return path.split('.').reduce((o, k) => (o != null ? o[k] : undefined), obj);
+  }
+
+  function randGlitch() {
+    return GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)];
+  }
+
+  function textFor(lang, key) {
+    return String(resolve(T[lang], key) ?? key);
+  }
+
+  // ── State ──
+  let currentLang = null;      // null = unresolved
+  let animatingEls = new Set();
+  let unresolvedTimers = [];
+
+  const allEls = document.querySelectorAll('[data-glitch]');
+
+  // ── Unresolved idle effect ──
+  // Cycles characters from all 3 languages randomly per-position
+  function startUnresolved() {
+    stopUnresolved();
+    allEls.forEach(el => {
+      el.classList.add('unresolved');
+      const key = el.dataset.key;
+      const texts = LANGS.map(l => textFor(l, key));
+      const maxLen = Math.max(...texts.map(t => t.length));
+
+      // Build an initial mixed string
+      function buildMixed() {
+        let s = '';
+        for (let i = 0; i < maxLen; i++) {
+          const pick = texts[Math.floor(Math.random() * 3)];
+          if (i < pick.length) {
+            // 30% chance of a glitch char instead
+            s += Math.random() < 0.3 ? randGlitch() : pick[i];
+          } else {
+            s += Math.random() < 0.5 ? randGlitch() : ' ';
+          }
+        }
+        return s;
+      }
+
+      el.textContent = buildMixed();
+
+      // Periodically swap a few characters
+      const tid = setInterval(() => {
+        const arr = el.textContent.split('');
+        const swaps = Math.max(1, Math.floor(arr.length * 0.15));
+        for (let s = 0; s < swaps; s++) {
+          const idx = Math.floor(Math.random() * maxLen);
+          if (idx < arr.length) {
+            const srcLang = texts[Math.floor(Math.random() * 3)];
+            arr[idx] = Math.random() < 0.25 ? randGlitch() : (srcLang[idx] || ' ');
+          }
+        }
+        el.textContent = arr.join('');
+      }, 120);
+
+      unresolvedTimers.push(tid);
+    });
+  }
+
+  function stopUnresolved() {
+    unresolvedTimers.forEach(clearInterval);
+    unresolvedTimers = [];
+    allEls.forEach(el => el.classList.remove('unresolved'));
+  }
+
+  // ── Glitch transition ──
+  function glitchTransition(el, targetText, staggerMs) {
+    return new Promise(res => {
+      setTimeout(() => {
+        const source = el.textContent;
+        const maxLen = Math.max(source.length, targetText.length);
+        const speed = 38;
+        const glitchFrames = 4;
+        const frameDur = 110 / glitchFrames;
+        let idx = 0;
+        let phase = 0;
+
+        el.classList.add('glitching');
+        animatingEls.add(el);
+
+        function step() {
+          if (idx >= maxLen) {
+            el.textContent = targetText;
+            el.style.textShadow = '';
+            el.style.transform = '';
+            el.classList.remove('glitching');
+            animatingEls.delete(el);
+            res();
+            return;
+          }
+
+          // Build string
+          let r = '';
+          for (let i = 0; i < maxLen; i++) {
+            if (i < idx) {
+              r += targetText[i] || '';
+            } else if (i === idx) {
+              r += phase < glitchFrames ? randGlitch() : (targetText[i] || '');
+            } else {
+              r += source[i] || (Math.random() < 0.1 ? randGlitch() : ' ');
+            }
+          }
+          el.textContent = r;
+
+          // RGB split shadow
+          const ox = (Math.random() - 0.5) * 3;
+          el.style.textShadow = `${-ox}px 0 rgba(255,0,64,.7), ${ox}px 0 rgba(0,255,255,.7)`;
+
+          const delay = phase < glitchFrames ? frameDur : speed;
+          setTimeout(() => {
+            if (phase < glitchFrames) {
+              phase++;
+            } else {
+              idx++;
+              phase = 0;
+            }
+            step();
+          }, delay);
+        }
+
+        step();
+      }, staggerMs);
+    });
+  }
+
+  function transitionTo(lang) {
+    if (animatingEls.size > 0) return; // wait for current animation
+    stopUnresolved();
+
+    currentLang = lang;
+
+    // Update button states
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+
+    // Update hint
+    const names = { en: 'English', es: 'Español', ja: '日本語' };
+    document.querySelector('.lang-hint').textContent = `Displaying in ${names[lang]} — select another to transition`;
+
+    // Stagger all elements
+    const promises = [];
+    allEls.forEach(el => {
+      const key = el.dataset.key;
+      const stagger = parseInt(el.dataset.stagger, 10) || 0;
+      const target = textFor(lang, key);
+      promises.push(glitchTransition(el, target, stagger * 65));
+    });
+
+    return Promise.all(promises);
+  }
+
+  // ── Wire up buttons ──
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      if (lang === currentLang) {
+        // Re-selecting same language → go back to unresolved
+        currentLang = null;
+        btn.classList.remove('active');
+        document.querySelector('.lang-hint').textContent =
+          'Text is currently unresolved — choose a language to lock in';
+        startUnresolved();
+      } else {
+        transitionTo(lang);
+      }
+    });
+  });
+
+  // ── Boot into unresolved state ──
+  startUnresolved();
+
+})();
+</script>
+</body>
+</html>
