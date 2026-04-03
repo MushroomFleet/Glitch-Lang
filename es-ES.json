@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "code": "es-ES",
+    "name": "Spanish",
+    "nativeName": "Español",
+    "direction": "ltr"
+  },
+  "common": {
+    "welcome": "Bienvenido",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "services": "Servicios",
+    "portfolio": "Portafolio",
+    "contact": "Contacto",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Transforma Tu Experiencia Digital",
+    "subtitle": "Interfaces multilingües fluidas con impresionantes transiciones visuales",
+    "cta": "Comenzar",
+    "learnMore": "Más Información"
+  },
+  "features": {
+    "title": "Características",
+    "speed": {
+      "title": "Ultra Rápido",
+      "description": "Rendimiento optimizado para animaciones suaves carácter por carácter"
+    },
+    "languages": {
+      "title": "Multilenguaje",
+      "description": "Soporte para pares de idiomas ilimitados con manejo automático RTL"
+    },
+    "customization": {
+      "title": "Totalmente Personalizable",
+      "description": "Controla el tiempo, la suavidad, la intensidad del glitch y los efectos visuales"
+    }
+  },
+  "footer": {
+    "copyright": "Todos los derechos reservados",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio"
+  },
+  "demo": {
+    "selectLanguage": "Seleccionar Idioma",
+    "primaryLanguage": "Idioma Primario",
+    "secondaryLanguage": "Idioma de Visualización",
+    "triggerTransition": "Activar Transición Glitch",
+    "resetDemo": "Reiniciar Demo"
+  }
+}

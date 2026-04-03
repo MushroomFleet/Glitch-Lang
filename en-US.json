@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "code": "en-US",
+    "name": "English (US)",
+    "nativeName": "English",
+    "direction": "ltr"
+  },
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try Again",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "portfolio": "Portfolio",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "hero": {
+    "title": "Transform Your Digital Experience",
+    "subtitle": "Seamless multilingual interfaces with stunning visual transitions",
+    "cta": "Get Started",
+    "learnMore": "Learn More"
+  },
+  "features": {
+    "title": "Features",
+    "speed": {
+      "title": "Lightning Fast",
+      "description": "Optimized performance for smooth character-by-character animations"
+    },
+    "languages": {
+      "title": "Multi-Language",
+      "description": "Support for unlimited language pairs with automatic RTL handling"
+    },
+    "customization": {
+      "title": "Fully Customizable",
+      "description": "Control timing, easing, glitch intensity, and visual effects"
+    }
+  },
+  "footer": {
+    "copyright": "All rights reserved",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "demo": {
+    "selectLanguage": "Select Language",
+    "primaryLanguage": "Primary Language",
+    "secondaryLanguage": "Display Language",
+    "triggerTransition": "Trigger Glitch Transition",
+    "resetDemo": "Reset Demo"
+  }
+}
